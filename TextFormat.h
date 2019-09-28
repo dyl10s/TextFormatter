@@ -1,0 +1,1 @@
+char* LoadNextLine(char** output);
