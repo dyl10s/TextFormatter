@@ -7,7 +7,8 @@ int main(int argc, char *argv[])
 {
 
   int lineLength = 0;
-  int foundWValue = 0;
+  int foundLegthValue = 0;
+  int justified = 0;
 
   // Start off by parsing the command line arg for lineLength
   for (int i = 1; i < argc; i++)
@@ -16,7 +17,7 @@ int main(int argc, char *argv[])
     {
       if (i + 1 < argc)
       {
-        foundWValue = 1;
+        foundLegthValue += 1;
         lineLength = atoi(argv[i + 1]);
       }
       else
@@ -24,16 +25,41 @@ int main(int argc, char *argv[])
         printf("Please specifiy a length after -w");
       }
     }
+
+    if (strcmp(argv[i], "-j") == 0)
+    {
+      if (i + 1 < argc)
+      {
+        justified = 1;
+        foundLegthValue += 1;
+        lineLength = atoi(argv[i + 1]);
+      }
+      else
+      {
+        printf("Please specifiy a length after -j");
+      }
+    }
   }
 
-  if(foundWValue == 0)
+  if(foundLegthValue == 0)
   {
-    fprintf (stderr, "You must specify a -w value");
+    fprintf (stderr, "You must specify a -w or -j value");
+    return -1;
+  }
+
+  if(foundLegthValue == 2)
+  {
+    fprintf (stderr, "You must not specify both a -w and -j value");
     return -1;
   }
 
   char *curLine;
-  curLine = (char *)malloc(101 * sizeof(char));
+  curLine = (char*) malloc(101 * sizeof(char));
+
+  char *buffer;
+  buffer = (char*) malloc((lineLength + 1) * sizeof(char));
+  strcpy(buffer, "");
+
   int curLineLength = 0;
   int isFirstInLine = 1;
 
@@ -56,23 +82,24 @@ int main(int argc, char *argv[])
         || (isFirstInLine == 0 && curLineLength + strlen(curWord) + 1 <= lineLength)){
           
           if(isFirstInLine == 0){
-            printf(" ");
+            buffer = strcat(buffer, " ");
             curLineLength += 1;
           }else{
             isFirstInLine = 0;
           }
 
           curLineLength += strlen(curWord);
-          printf("%s", curWord); 
+          buffer = strcat(buffer, curWord);
         }else{
-          printf("\n");
+          printf("%s\n", buffer);
+          strcpy(buffer, "");
           curLineLength = strlen(curWord);
           if(curLineLength >= lineLength){
             //Overflow Error
             overflowLines++;
             printf("%s", curWord);
           }else{
-            printf("%s", curWord);
+            strcpy(buffer, curWord);
           }
         }
         curWord = strtok(NULL, " \n");
@@ -80,11 +107,14 @@ int main(int argc, char *argv[])
     }
   }
 
+  printf("%s", buffer);
+
   if(overflowLines > 0){
     fprintf (stderr, "\n\nWarning: %d overfull line(s)", overflowLines);
   }
 
   free(curLine);
+  free(buffer);
 
   return 0;
 }
