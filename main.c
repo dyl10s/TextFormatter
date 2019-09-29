@@ -64,11 +64,14 @@ int main(int argc, char *argv[])
   int isFirstInLine = 1;
 
   int overflowLines = 0;
+  int spacesInLine = 0;
 
   while (LoadNextLine(&curLine))
   {
     if (strcmp(curLine, "\n") == 0)
     {
+      printf("%s", buffer);
+      strcpy(buffer, "");
       printf("\n\n");
       isFirstInLine = 1;
       curLineLength = 0;
@@ -83,6 +86,7 @@ int main(int argc, char *argv[])
           
           if(isFirstInLine == 0){
             buffer = strcat(buffer, " ");
+            spacesInLine++;
             curLineLength += 1;
           }else{
             isFirstInLine = 0;
@@ -91,7 +95,8 @@ int main(int argc, char *argv[])
           curLineLength += strlen(curWord);
           buffer = strcat(buffer, curWord);
         }else{
-          printf("%s\n", buffer);
+          PrintBuffer(buffer, justified, spacesInLine, lineLength);
+          spacesInLine = 0;
           strcpy(buffer, "");
           curLineLength = strlen(curWord);
           if(curLineLength >= lineLength){
