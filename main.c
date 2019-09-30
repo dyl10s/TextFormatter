@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
   //need to print the rest of the buffer
   //to the screen. It is an incomplete
   //line so we dont need any formatting.
-  printf("%s", buffer);
+  printf("%s\n", buffer);
 
   //If there were any overflow lines
   //tell the user.
